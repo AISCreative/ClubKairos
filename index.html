@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#0a0a0f">
+  <title>Club Kairos · Catálogo</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+    html, body { width: 100%; height: 100%; overflow: hidden; background: #050508; }
+    body { background: radial-gradient(circle at 70% 20%, #0f0f1a 0%, #020205 100%); display: flex; justify-content: center; align-items: center; padding: 12px; position: relative; }
+    body::before { content: "CLUB KAIROS"; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-12deg) scale(1.2); font-size: clamp(3rem, 15vw, 10rem); font-weight: 900; color: rgba(255, 215, 0, 0.04); white-space: nowrap; letter-spacing: 12px; text-transform: uppercase; pointer-events: none; z-index: 1; animation: floatLogo 20s infinite alternate ease-in-out; }
+    @keyframes floatLogo { 0% { transform: translate(-50%, -50%) rotate(-12deg) scale(1.2); opacity: 0.04; } 100% { transform: translate(-48%, -52%) rotate(-8deg) scale(1.25); opacity: 0.08; } }
+    
+    .kiosco { width: 100%; max-width: 1280px; height: 100%; background: rgba(6, 6, 12, 0.85); backdrop-filter: blur(8px); border: 3px solid #ffd700; border-radius: 30px; box-shadow: 0 0 40px #ffd700, inset 0 0 20px rgba(255, 215, 0, 0.1); display: flex; flex-direction: column; overflow: hidden; position: relative; z-index: 10; animation: borderPulse 3s infinite; }
+    @keyframes borderPulse { 0%, 100% { border-color: #ffd700; box-shadow: 0 0 40px #ffd700; } 50% { border-color: #ff6b00; box-shadow: 0 0 60px #ff6b00; } }
+    
+    .header { padding: 1.5rem 1.5rem 0.8rem; text-align: center; border-bottom: 2px solid #ff6b00; background: linear-gradient(180deg, rgba(255, 107, 0, 0.15) 0%, transparent 100%); }
+    .logo-masquehigh { font-size: 4.8rem; font-weight: 900; background: linear-gradient(135deg, #ffd700, #ff6b00, #ffd700, #ff8c00); -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: 0 0 30px rgba(255, 215, 0, 0.5); line-height: 1.1; animation: rainbowShift 2s infinite; }
+    @keyframes rainbowShift { 0%, 100% { filter: hue-rotate(0deg); } 50% { filter: hue-rotate(30deg); } }
+    .logo-club { font-size: 3.5rem; font-weight: 900; letter-spacing: 12px; background: linear-gradient(135deg, #ffd700, #ff6b00); -webkit-background-clip: text; background-clip: text; color: transparent; margin-top: -0.5rem; text-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
+    .welcome { font-size: 1.6rem; color: #ffd700; background: rgba(255, 215, 0, 0.1); padding: 0.3rem 1.5rem; border-radius: 40px; display: inline-block; border: 1px solid #ffd700; box-shadow: 0 0 15px rgba(255, 215, 0, 0.3); }
+    
+    .pestanas-wrapper { overflow-x: auto; overflow-y: hidden; padding: 1rem 1rem; scrollbar-width: thin; }
+    .pestanas { display: flex; gap: 1rem; min-width: max-content; }
+    .pestana { background: rgba(8, 8, 16, 0.9); border: 2px solid; border-radius: 20px; padding: 0.8rem 1.5rem; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease; min-width: 130px; }
+    .pestana-icon { font-size: 2rem; }
+    .pestana-text { font-size: 1.2rem; font-weight: 700; white-space: nowrap; color: white; letter-spacing: 1px; }
+    .pestana.activa { transform: scale(1.02); border-width: 3px; background: rgba(255, 255, 255, 0.05); box-shadow: 0 0 25px currentColor; }
+    
+    .contenido { flex: 1; overflow-y: auto; padding: 1rem; }
+    .panel { display: none; }
+    .panel.activo { display: block; }
+    
+    .subseccion { background: rgba(4, 4, 10, 0.7); border-radius: 24px; padding: 1.2rem; margin-bottom: 1.5rem; border: 1px solid; }
+    .subseccion-titulo { font-size: 2rem; margin-bottom: 1rem; padding-left: 1rem; border-left: 8px solid; text-shadow: 0 0 10px currentColor; }
+    
+    .productos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1.2rem; }
+    .producto-card { background: rgba(10, 10, 18, 0.9); border: 2px solid; border-radius: 20px; padding: 1rem 0.8rem; display: flex; flex-direction: column; align-items: center; text-align: center; transition: all 0.2s ease; cursor: pointer; }
+    .producto-card:hover { transform: translateY(-5px) scale(1.02); box-shadow: 0 0 25px currentColor; }
+    .producto-card img { width: 110px; height: 110px; object-fit: cover; border-radius: 50%; border: 3px solid; margin-bottom: 0.8rem; box-shadow: 0 0 15px currentColor; pointer-events: none; }
+    .producto-card h4 { font-size: 1.3rem; color: white; margin-bottom: 0.5rem; pointer-events: none; }
+    .producto-precio { font-size: 1.4rem; font-weight: 800; padding: 0.3rem 1rem; border-radius: 40px; display: inline-block; background: rgba(0,0,0,0.5); border: 2px solid; pointer-events: none; }
+    
+    .liados-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1.2rem; }
+    .liado-card { background: linear-gradient(145deg, #0e0e18, #080810); border: 3px solid; border-radius: 24px; padding: 1.2rem 0.8rem; display: flex; flex-direction: column; align-items: center; text-align: center; transition: all 0.2s ease; cursor: pointer; }
+    .liado-card:hover { transform: translateY(-5px); box-shadow: 0 0 25px currentColor; }
+    .liado-icon { font-size: 4rem; margin-bottom: 0.5rem; filter: drop-shadow(0 0 10px currentColor); pointer-events: none; }
+    .liado-card h4 { font-size: 1.5rem; margin-bottom: 0.5rem; pointer-events: none; }
+    .liado-precio { font-size: 1.4rem; font-weight: 800; padding: 0.3rem 1.2rem; border-radius: 40px; display: inline-block; background: rgba(0,0,0,0.5); border: 2px solid; pointer-events: none; }
+    
+    .munchies-categoria { background: rgba(6, 6, 14, 0.6); border: 2px solid; border-radius: 30px; padding: 1.2rem; margin-bottom: 1.5rem; }
+    .categoria-titulo { font-size: 2.4rem; margin-bottom: 1rem; border-bottom: 3px solid; padding-bottom: 0.5rem; display: inline-block; text-shadow: 0 0 10px currentColor; }
+    .items-lista { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 0.8rem; }
+    .item-munchi { display: flex; justify-content: space-between; align-items: center; background: rgba(0, 0, 0, 0.5); padding: 0.8rem 1.2rem; border-radius: 60px; border: 2px solid; transition: all 0.2s ease; }
+    .item-munchi:hover { transform: translateX(5px); box-shadow: 0 0 15px currentColor; }
+    .item-nombre { font-size: 1.4rem; color: white; text-transform: uppercase; font-weight: 600; }
+    .item-precio { font-size: 1.5rem; font-weight: 800; }
+    
+    .eventos-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; padding: 0.5rem; }
+    .evento-card { background: transparent; border: 3px solid; border-radius: 20px; overflow: hidden; aspect-ratio: 1/1.2; position: relative; transition: all 0.2s ease; cursor: pointer; }
+    .evento-card:hover { transform: scale(1.02); box-shadow: 0 0 30px currentColor; }
+    .evento-card img { width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; }
+    .evento-delete { position: absolute; top: 8px; right: 8px; background: #ff6b00; color: white; border: none; border-radius: 50%; width: 36px; height: 36px; font-size: 22px; cursor: pointer; display: none; z-index: 100; box-shadow: 0 0 10px #ff6b00; }
+    .admin-mode .evento-delete { display: block; }
+    
+    .image-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.95); backdrop-filter: blur(15px); z-index: 10000; justify-content: center; align-items: center; cursor: pointer; }
+    .image-modal.active { display: flex; animation: fadeInModal 0.2s ease; }
+    @keyframes fadeInModal { from { opacity: 0; } to { opacity: 1; } }
+    .modal-content { max-width: 90vw; max-height: 90vh; position: relative; display: flex; justify-content: center; align-items: center; border-radius: 30px; box-shadow: 0 0 60px rgba(255, 215, 0, 0.6); border: 3px solid #ffd700; background: #050508; padding: 8px; }
+    .modal-content img { max-width: 100%; max-height: 85vh; object-fit: contain; border-radius: 24px; display: block; }
+    .close-modal { position: absolute; top: -20px; right: -20px; background: #ff6b00; color: white; font-size: 32px; font-weight: bold; width: 55px; height: 55px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 3px solid #ffd700; box-shadow: 0 0 20px #ff6b00; transition: 0.2s; z-index: 10001; }
+    .close-modal:hover { transform: scale(1.1); background: #ff8833; }
+    @media (max-width: 600px) { .close-modal { top: -10px; right: -10px; width: 45px; height: 45px; font-size: 26px; } }
+    
+    .save-indicator { position: fixed; bottom: 100px; right: 30px; background: #ffd700; color: black; padding: 15px 25px; border-radius: 50px; font-size: 1.6rem; font-weight: bold; box-shadow: 0 0 25px #ffd700; z-index: 2100; display: none; border: 2px solid #ff6b00; }
+    
+    .admin-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; margin-bottom: 20px; }
+    .admin-card { background: #0c0c16; border: 2px solid; border-radius: 20px; padding: 15px; cursor: grab; transition: all 0.2s ease; }
+    .admin-card:active { cursor: grabbing; }
+    .admin-card.dragging { opacity: 0.5; cursor: grabbing; }
+    .admin-card.drag-over { border: 3px dashed; background: #16162a; }
+    .admin-img { width: 100%; height: 180px; object-fit: cover; border-radius: 15px; margin-bottom: 10px; border: 2px solid; }
+    .admin-input { width: 100%; padding: 12px; margin-bottom: 10px; background: #030308; border: 2px solid #22223b; border-radius: 10px; color: white; font-size: 1.4rem; }
+    .admin-input:focus { outline: none; border-color: currentColor; }
+    .admin-precio { width: 100%; padding: 12px; margin-bottom: 10px; background: #030308; border: 2px solid; border-radius: 10px; font-size: 1.4rem; font-weight: bold; }
+    .admin-file-input { display: none; }
+    .admin-btn { width: 100%; padding: 12px; border: none; border-radius: 30px; font-size: 1.4rem; cursor: pointer; margin-bottom: 5px; font-weight: bold; }
+    .btn-upload { background: #22223b; color: white; border: 1px solid; }
+    .btn-delete { background: #ff6b00; color: white; }
+    .drag-handle { text-align: center; font-size: 1.2rem; margin-bottom: 10px; cursor: grab; background: rgba(255,255,255,0.05); border-radius: 30px; padding: 5px; border: 1px solid; }
+    .drag-handle:active { cursor: grabbing; }
+
+    /* Estilos para arrastrar secciones en admin */
+    .seccion-drag-item {
+      padding: 10px 16px;
+      margin: 4px;
+      border-radius: 20px;
+      cursor: grab;
+      transition: all 0.2s ease;
+      border: 2px solid;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: bold;
+      background: rgba(0,0,0,0.3);
+    }
+    .seccion-drag-item:active { cursor: grabbing; }
+    .seccion-drag-item.dragging { opacity: 0.4; }
+    .seccion-drag-item.drag-over { transform: scale(1.05); box-shadow: 0 0 20px currentColor; }
+    .seccion-drag-item .drag-icon { font-size: 1.2rem; opacity: 0.6; }
+    .seccion-drag-item .delete-btn { 
+      background: #ff6b00; 
+      border: none; 
+      border-radius: 50%; 
+      width: 24px; 
+      height: 24px; 
+      color: white; 
+      cursor: pointer; 
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-left: 4px;
+    }
+    .seccion-drag-item .delete-btn:hover { transform: scale(1.1); }
+
+    /* Clase para productos vacíos */
+    .vacio-msg {
+      grid-column: 1 / -1;
+      text-align: center;
+      color: #666;
+      font-size: 1.8rem;
+      padding: 40px 20px;
+      border: 2px dashed #333;
+      border-radius: 20px;
+      background: rgba(0,0,0,0.2);
+    }
+  </style>
+</head>
+<body>
+  <main class="kiosco">
+    <div class="header">
+      <div class="logo">
+        <div class="logo-masquehigh">CLUB KAIROS</div>
+        <div class="logo-club">SOCIAL</div>
+      </div>
+      <div class="welcome">✨ Bienvenido a Club Kairos ✨</div>
+    </div>
+    <div class="pestanas-wrapper">
+      <div class="pestanas" id="pestanasContainer"></div>
+    </div>
+    <div class="contenido" id="contenidoPaneles"></div>
+  </main>
+
+  <div id="imageModal" class="image-modal" onclick="cerrarModalImagen()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <img id="modalImage" src="" alt="Vista ampliada">
+      <div class="close-modal" onclick="cerrarModalImagen()">✖</div>
+    </div>
+  </div>
+
+  <div style="position: fixed; bottom: 30px; right: 30px; z-index: 2000;">
+    <button id="btn-admin" onclick="mostrarLogin()" style="width: 70px; height: 70px; border-radius: 50%; background: #0c0c16; border: 3px solid #ffd700; color: #ffd700; font-size: 32px; box-shadow: 0 0 25px #ffd700; cursor: pointer;">⚙️</button>
+  </div>
+
+  <div id="panel-login" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); backdrop-filter: blur(8px); z-index: 2001; align-items: center; justify-content: center;">
+    <div style="background: #0c0c16; border: 3px solid #ffd700; border-radius: 40px; padding: 40px; width: 90%; max-width: 500px; box-shadow: 0 0 60px #ff6b00;">
+      <h2 style="background: linear-gradient(135deg, #ffd700, #ff6b00); -webkit-background-clip: text; background-clip: text; color: transparent; text-align: center; font-size: 3rem; margin-bottom: 30px;">🔐 ADMIN</h2>
+      <input type="password" id="login-password" placeholder="Contraseña" style="width: 100%; padding: 25px; font-size: 2rem; background: #030308; border: 2px solid #ffd700; border-radius: 30px; color: white; margin-bottom: 30px; text-align: center;">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+        <button onclick="comprobarLogin()" style="background: #ffd700; border: 2px solid #ff6b00; border-radius: 30px; padding: 25px; font-size: 2rem; font-weight: bold; color: black; cursor: pointer;">ENTRAR</button>
+        <button onclick="cerrarLogin()" style="background: #22223b; border: 2px solid #ff6b00; border-radius: 30px; padding: 25px; font-size: 2rem; font-weight: bold; color: white; cursor: pointer;">CERRAR</button>
+      </div>
+      <p id="login-error" style="color: #ff6b00; text-align: center; font-size: 1.8rem; margin-top: 20px; display: none;">❌ Contraseña incorrecta</p>
+    </div>
+  </div>
+
+  <div id="panel-admin" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #050508; z-index: 2002; overflow-y: auto; padding: 20px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; background: #0c0c16; padding: 20px; border-radius: 20px; border: 2px solid #ffd700;">
+      <h2 style="background: linear-gradient(135deg, #ffd700, #ff6b00); -webkit-background-clip: text; background-clip: text; color: transparent; font-size: 2.5rem;">✏️ EDITAR TODO</h2>
+      <div style="display: flex; gap: 10px;">
+        <button id="addNewSectionBtn" style="background: #ffd700; border: 2px solid #ff6b00; border-radius: 40px; padding: 12px 24px; font-size: 1.4rem; font-weight: bold; color: black; cursor: pointer;">➕ AÑADIR SECCIÓN</button>
+        <button onclick="cerrarAdmin()" style="background: #22223b; border: 2px solid #ff6b00; border-radius: 40px; padding: 12px 24px; font-size: 1.4rem; color: white; cursor: pointer;">CERRAR</button>
+      </div>
+    </div>
+    
+    <!-- SECCIONES REORDENABLES CON ARRASTRE -->
+    <div style="margin-bottom: 20px; background: #0c0c16; padding: 15px; border-radius: 20px; border: 1px solid #22223b;">
+      <p style="color: #888; font-size: 1.2rem; margin-bottom: 10px;">🔄 Arrastra las secciones para reordenarlas:</p>
+      <div id="seccionesDragList" style="display: flex; flex-wrap: wrap; gap: 8px; min-height: 60px; padding: 8px; background: rgba(0,0,0,0.2); border-radius: 16px;"></div>
+    </div>
+    
+    <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;" id="adminTabsContainer"></div>
+    <div id="admin-contenido" style="background: #0c0c16; border-radius: 20px; padding: 20px; margin-bottom: 20px; border: 1px solid #22223b;">
+      <p style="color: #888; text-align: center; font-size: 1.8rem;">Selecciona una sección para editar</p>
+    </div>
+    <button onclick="guardarTodo()" style="width: 100%; background: linear-gradient(135deg, #ffd700, #ff6b00); border: 2px solid #ffd700; border-radius: 60px; padding: 25px; font-size: 2.5rem; font-weight: bold; color: black; cursor: pointer; box-shadow: 0 0 20px #ffd700;">💾 GUARDAR CAMBIOS</button>
+  </div>
+
+  <div id="saveIndicator" class="save-indicator">✅ GUARDADO</div>
+
+  <script>
+    const CONTRASENA = "kairo123";
+    const STORAGE_KEY = 'club_kairos_datos_v1';
+    const VERSION_KEY = 'club_kairos_version_v1';
+
+    const COLORES_NEON = {
+      dorado: { color: '#ffd700', glow: '#ffd700', bg: 'rgba(255, 215, 0, 0.1)' },
+      naranja: { color: '#ff6b00', glow: '#ff6b00', bg: 'rgba(255, 107, 0, 0.1)' },
+      cian: { color: '#00ffff', glow: '#00ffff', bg: 'rgba(0, 255, 255, 0.1)' },
+      magenta: { color: '#ff00ff', glow: '#ff00ff', bg: 'rgba(255, 0, 255, 0.1)' },
+      amarillo: { color: '#ffff00', glow: '#ffff00', bg: 'rgba(255, 255, 0, 0.1)' },
+      verdeMenta: { color: '#00ffaa', glow: '#00ffaa', bg: 'rgba(0, 255, 170, 0.1)' },
+      rojoCereza: { color: '#ff0033', glow: '#ff0033', bg: 'rgba(255, 0, 51, 0.1)' },
+      azulElectro: { color: '#0044ff', glow: '#0044ff', bg: 'rgba(0, 68, 255, 0.1)' },
+      lima: { color: '#aaff00', glow: '#aaff00', bg: 'rgba(170, 255, 0, 0.1)' }
+    };
+
+    const COLORES_POR_TIPO = {
+      extracciones: COLORES_NEON.magenta,
+      hierbas: COLORES_NEON.verdeMenta,
+      hash: COLORES_NEON.naranja,
+      liados: COLORES_NEON.cian,
+      munchies: COLORES_NEON.amarillo,
+      eventos: COLORES_NEON.lima,
+      cbd: COLORES_NEON.azulElectro,
+      bebidas: COLORES_NEON.dorado,
+      picar: COLORES_NEON.naranja
+    };
+
+    // ========== DATOS MAESTROS (TODOS VACÍOS) ==========
+    const DATOS_MAESTROS = [
+      { 
+        id: "extracciones", 
+        nombre: "EXTRACCIONES", 
+        icono: "⚡", 
+        tipo: "productos", 
+        colorKey: "extracciones",
+        items: []
+      },
+      { 
+        id: "hierbas", 
+        nombre: "HIERBAS", 
+        icono: "🌿", 
+        tipo: "productos", 
+        colorKey: "hierbas",
+        items: []
+      },
+      { 
+        id: "hash", 
+        nombre: "HASH", 
+        icono: "🍫", 
+        tipo: "productos", 
+        colorKey: "hash",
+        items: []
+      },
+      {
+        id: "cbd",
+        nombre: "CBD",
+        icono: "🌸",
+        tipo: "productos",
+        colorKey: "cbd",
+        items: []
+      },
+      { 
+        id: "liados", 
+        nombre: "LIADOS", 
+        icono: "🚬", 
+        tipo: "liados", 
+        colorKey: "liados",
+        items: []
+      },
+      { 
+        id: "munchies", 
+        nombre: "MUNCHIES", 
+        icono: "🍕", 
+        tipo: "munchies", 
+        colorKey: "munchies",
+        sub: {
+          bebidas: [],
+          picar: []
+        }
+      },
+      { 
+        id: "eventos", 
+        nombre: "EVENTOS", 
+        icono: "🎉", 
+        tipo: "eventos", 
+        colorKey: "eventos",
+        items: []
+      }
+    ];
+
+    let secciones = [];
+    let draggedSectionIndex = null;
+    let draggedIndex = null, currentSecId = null;
+
+    function getColorForSection(sec) {
+      if (sec.colorKey && COLORES_POR_TIPO[sec.colorKey]) return COLORES_POR_TIPO[sec.colorKey];
+      return COLORES_NEON.dorado;
+    }
+
+    function cargarDatos() {
+      const versionGuardada = localStorage.getItem(VERSION_KEY);
+      const versionActual = '2.1';
+      
+      if (versionGuardada !== versionActual) {
+        secciones = JSON.parse(JSON.stringify(DATOS_MAESTROS));
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({ secciones }));
+        localStorage.setItem(VERSION_KEY, versionActual);
+      } else {
+        const guardado = localStorage.getItem(STORAGE_KEY);
+        if (guardado) {
+          try {
+            const data = JSON.parse(guardado);
+            if (data.secciones) secciones = data.secciones;
+            else secciones = data;
+          } catch(e) {
+            secciones = JSON.parse(JSON.stringify(DATOS_MAESTROS));
+          }
+        } else {
+          secciones = JSON.parse(JSON.stringify(DATOS_MAESTROS));
+        }
+      }
+      
+      secciones.forEach(sec => {
+        if (!sec.colorKey) {
+          const map = { extracciones:'extracciones', hierbas:'hierbas', hash:'hash', liados:'liados', munchies:'munchies', eventos:'eventos', cbd:'cbd' };
+          sec.colorKey = map[sec.id] || 'dorado';
+        }
+        if (sec.id === 'cbd' && !sec.items) sec.items = [];
+        if (sec.tipo === 'munchies' && !sec.sub) {
+          sec.sub = { bebidas: [], picar: [] };
+        }
+        // Asegurar que items exista para todas las secciones de tipo productos/liados/eventos
+        if (['productos', 'liados', 'eventos'].includes(sec.tipo) && !sec.items) {
+          sec.items = [];
+        }
+      });
+      
+      renderizarTodo();
+    }
+
+    function guardarCompleto() { 
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ secciones })); 
+      localStorage.setItem(VERSION_KEY, '2.1');
+      mostrarIndicator(); 
+    }
+    
+    function mostrarIndicator() { const ind = document.getElementById('saveIndicator'); ind.style.display = 'block'; setTimeout(() => ind.style.display = 'none', 2000); }
+
+    function abrirImagenGrande(url) { document.getElementById('modalImage').src = url; document.getElementById('imageModal').classList.add('active'); }
+    function cerrarModalImagen() { document.getElementById('imageModal').classList.remove('active'); document.getElementById('modalImage').src = ''; }
+
+    function renderizarTodo() { renderPestanas(); renderPaneles(); }
+    
+    function renderPestanas() {
+      const container = document.getElementById('pestanasContainer');
+      container.innerHTML = '';
+      secciones.forEach((sec, idx) => {
+        const pest = document.createElement('div');
+        pest.className = 'pestana' + (idx === 0 ? ' activa' : '');
+        const color = getColorForSection(sec);
+        pest.style.borderColor = color.color;
+        pest.style.color = color.color;
+        if (idx === 0) pest.style.boxShadow = `0 0 25px ${color.color}`;
+        pest.innerHTML = `<div class="pestana-icon">${sec.icono}</div><div class="pestana-text">${sec.nombre}</div>`;
+        pest.addEventListener('click', () => {
+          document.querySelectorAll('.pestana').forEach((p,i) => { p.classList.remove('activa'); p.style.boxShadow = ''; });
+          pest.classList.add('activa');
+          pest.style.boxShadow = `0 0 25px ${color.color}`;
+          document.querySelectorAll('.panel').forEach((p,i) => p.classList.toggle('activo', i === idx));
+        });
+        container.appendChild(pest);
+      });
+    }
+
+    function renderPaneles() {
+      const contenedor = document.getElementById('contenidoPaneles');
+      contenedor.innerHTML = '';
+      secciones.forEach((sec, idx) => {
+        const panel = document.createElement('div');
+        panel.className = 'panel' + (idx === 0 ? ' activo' : '');
+        let html = '';
+        if (sec.tipo === 'productos') html = `<div class="subseccion" style="border-color: ${getColorForSection(sec).color};"><h3 class="subseccion-titulo" style="border-left-color: ${getColorForSection(sec).color}; color: ${getColorForSection(sec).color};">${sec.icono} ${sec.nombre}</h3><div class="productos-grid" id="grid-${sec.id}"></div></div>`;
+        else if (sec.tipo === 'liados') html = `<div class="subseccion" style="border-color: ${getColorForSection(sec).color};"><h3 class="subseccion-titulo" style="border-left-color: ${getColorForSection(sec).color}; color: ${getColorForSection(sec).color};">🚬 ${sec.nombre}</h3><div class="liados-grid" id="grid-${sec.id}"></div></div>`;
+        else if (sec.tipo === 'munchies') html = `<div><div class="munchies-categoria" style="border-color: ${getColorForSection(sec).color};"><div class="categoria-titulo" style="color: ${getColorForSection(sec).color}; border-bottom-color: ${getColorForSection(sec).color};">🥤 BEBIDAS</div><div class="items-lista" id="bebidas-lista-${sec.id}"></div></div><div class="munchies-categoria" style="border-color: ${getColorForSection(sec).color};"><div class="categoria-titulo" style="color: ${getColorForSection(sec).color}; border-bottom-color: ${getColorForSection(sec).color};">🍿 PICAR</div><div class="items-lista" id="picar-lista-${sec.id}"></div></div></div>`;
+        else if (sec.tipo === 'eventos') html = `<div class="subseccion" style="border-color: ${getColorForSection(sec).color};"><h3 class="subseccion-titulo" style="border-left-color: ${getColorForSection(sec).color}; color: ${getColorForSection(sec).color};">🎉 ${sec.nombre}</h3><div class="eventos-grid" id="eventos-grid-${sec.id}"></div></div>`;
+        panel.innerHTML = html;
+        contenedor.appendChild(panel);
+      });
+      secciones.forEach(sec => {
+        if (sec.tipo === 'productos') llenarProductos(sec);
+        if (sec.tipo === 'liados') llenarLiados(sec);
+        if (sec.tipo === 'munchies') llenarMunchies(sec);
+        if (sec.tipo === 'eventos') llenarEventos(sec);
+      });
+    }
+
+    function llenarProductos(sec) {
+      const grid = document.getElementById(`grid-${sec.id}`);
+      if (!grid) return;
+      const color = getColorForSection(sec);
+      grid.innerHTML = '';
+      if (!sec.items || sec.items.length === 0) {
+        grid.innerHTML = `<div class="vacio-msg" style="border-color:${color.color};">📭 Sin productos aún</div>`;
+        return;
+      }
+      sec.items.forEach((item) => {
+        const card = document.createElement('div');
+        card.className = 'producto-card';
+        card.style.borderColor = color.color;
+        card.style.boxShadow = `0 0 15px ${color.glow}`;
+        const imgSrc = item.img || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Crect width="100" height="100" fill="%23333"/%3E%3Ctext x="50" y="55" fill="white" font-size="10" text-anchor="middle"%3EN/A%3C/text%3E%3C/svg%3E';
+        card.innerHTML = `<img src="${imgSrc}" style="border-color: ${color.color};"><h4 style="color:white;">${escapeHtml(item.nombre || 'Sin nombre')}</h4><div class="producto-precio" style="color:${color.color}; border-color:${color.color}; background:${color.bg};">${escapeHtml(item.precio || '0€')}</div>`;
+        card.addEventListener('click', (e) => { e.stopPropagation(); if(item.img) abrirImagenGrande(item.img); });
+        grid.appendChild(card);
+      });
+    }
+
+    function llenarLiados(sec) {
+      const grid = document.getElementById(`grid-${sec.id}`);
+      if (!grid) return;
+      const color = getColorForSection(sec);
+      grid.innerHTML = '';
+      if (!sec.items || sec.items.length === 0) {
+        grid.innerHTML = `<div class="vacio-msg" style="border-color:${color.color};">📭 Sin liados aún</div>`;
+        return;
+      }
+      sec.items.forEach((item) => {
+        const div = document.createElement('div');
+        div.className = 'liado-card';
+        div.style.borderColor = color.color;
+        div.innerHTML = `<div class="liado-icon" style="filter: drop-shadow(0 0 10px ${color.color});">🚬</div><h4 style="color:${color.color};">${escapeHtml(item.nombre || 'Sin nombre')}</h4><div class="liado-precio" style="color:${color.color}; border-color:${color.color};">${escapeHtml(item.precio || '0€')}</div>`;
+        div.addEventListener('click', () => alert(`${item.nombre || 'Sin nombre'}\n${item.precio || '0€'}`));
+        grid.appendChild(div);
+      });
+    }
+
+    function llenarMunchies(sec) {
+      const color = getColorForSection(sec);
+      const bebidasDiv = document.getElementById(`bebidas-lista-${sec.id}`);
+      const picarDiv = document.getElementById(`picar-lista-${sec.id}`);
+      if(bebidasDiv) { 
+        bebidasDiv.innerHTML = ''; 
+        if (!sec.sub.bebidas || sec.sub.bebidas.length === 0) {
+          bebidasDiv.innerHTML = `<div class="vacio-msg" style="border-color:${color.color};">📭 Sin bebidas aún</div>`;
+        } else {
+          sec.sub.bebidas.forEach(item => { 
+            bebidasDiv.innerHTML += `<div class="item-munchi" style="border-color:${color.color};"><span class="item-nombre">${escapeHtml(item.nombre || 'Sin nombre')}</span><span class="item-precio" style="color:${color.color};">${escapeHtml(item.precio || '0€')}</span></div>`; 
+          });
+        }
+      }
+      if(picarDiv) { 
+        picarDiv.innerHTML = ''; 
+        if (!sec.sub.picar || sec.sub.picar.length === 0) {
+          picarDiv.innerHTML = `<div class="vacio-msg" style="border-color:${color.color};">📭 Sin productos de picar aún</div>`;
+        } else {
+          sec.sub.picar.forEach(item => { 
+            picarDiv.innerHTML += `<div class="item-munchi" style="border-color:${color.color};"><span class="item-nombre">${escapeHtml(item.nombre || 'Sin nombre')}</span><span class="item-precio" style="color:${color.color};">${escapeHtml(item.precio || '0€')}</span></div>`; 
+          });
+        }
+      }
+    }
+
+    function llenarEventos(sec) {
+      const grid = document.getElementById(`eventos-grid-${sec.id}`);
+      if(!grid) return;
+      const color = getColorForSection(sec);
+      grid.innerHTML = '';
+      if (!sec.items || sec.items.length === 0) {
+        grid.innerHTML = `<div class="vacio-msg" style="border-color:${color.color};">📭 Sin eventos aún</div>`;
+        return;
+      }
+      sec.items.forEach((img, idx) => {
+        const card = document.createElement('div');
+        card.className = 'evento-card';
+        card.style.borderColor = color.color;
+        const imgSrc = img || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"%3E%3Crect width="200" height="200" fill="%23333"/%3E%3Ctext x="100" y="110" fill="white" text-anchor="middle"%3EEVENTO%3C/text%3E%3C/svg%3E';
+        card.innerHTML = `<img src="${imgSrc}"><button class="evento-delete" onclick="eliminarEvento('${sec.id}', ${idx})">✖</button>`;
+        card.addEventListener('click', (e) => { if(!e.target.classList.contains('evento-delete')) abrirImagenGrande(imgSrc); });
+        grid.appendChild(card);
+      });
+    }
+
+    // ========== FUNCIONES PARA ARRASTRAR SECCIONES ==========
+    function renderSeccionesDragList() {
+      const container = document.getElementById('seccionesDragList');
+      if (!container) return;
+      container.innerHTML = '';
+      
+      secciones.forEach((sec, idx) => {
+        const color = getColorForSection(sec);
+        const item = document.createElement('div');
+        item.className = 'seccion-drag-item';
+        item.style.borderColor = color.color;
+        item.style.color = color.color;
+        item.draggable = true;
+        item.dataset.index = idx;
+        
+        item.innerHTML = `
+          <span class="drag-icon">⠿</span>
+          ${sec.icono} ${sec.nombre}
+          <button class="delete-btn" onclick="eliminarSeccion(${idx})" title="Eliminar sección">✕</button>
+        `;
+        
+        item.addEventListener('dragstart', (e) => {
+          draggedSectionIndex = idx;
+          e.dataTransfer.setData('text/plain', idx);
+          item.classList.add('dragging');
+        });
+        
+        item.addEventListener('dragend', () => {
+          item.classList.remove('dragging');
+          document.querySelectorAll('.seccion-drag-item').forEach(el => el.classList.remove('drag-over'));
+        });
+        
+        item.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          document.querySelectorAll('.seccion-drag-item').forEach(el => el.classList.remove('drag-over'));
+          item.classList.add('drag-over');
+        });
+        
+        item.addEventListener('dragleave', () => {
+          item.classList.remove('drag-over');
+        });
+        
+        item.addEventListener('drop', (e) => {
+          e.preventDefault();
+          item.classList.remove('drag-over');
+          const fromIndex = parseInt(e.dataTransfer.getData('text/plain'));
+          if (fromIndex !== idx) {
+            const [moved] = secciones.splice(fromIndex, 1);
+            secciones.splice(idx, 0, moved);
+            guardarCompleto();
+            renderizarTodo();
+            renderAdminUI();
+            const activeTab = document.querySelector('#adminTabsContainer .seccion-drag-item');
+            if (activeTab) {
+              const secId = activeTab.dataset.secId;
+              if (secId) mostrarSeccionAdmin(secId);
+            }
+          }
+          document.querySelectorAll('.seccion-drag-item').forEach(el => el.classList.remove('drag-over'));
+          draggedSectionIndex = null;
+        });
+        
+        container.appendChild(item);
+      });
+    }
+
+    // ========== ADMIN FUNCTIONS ==========
+    function mostrarLogin() { document.getElementById('panel-login').style.display = 'flex'; document.getElementById('login-password').value = ''; }
+    function cerrarLogin() { document.getElementById('panel-login').style.display = 'none'; document.getElementById('login-error').style.display = 'none'; }
+    function comprobarLogin() {
+      if(document.getElementById('login-password').value === CONTRASENA) {
+        document.getElementById('panel-login').style.display = 'none';
+        document.getElementById('panel-admin').style.display = 'block';
+        document.body.classList.add('admin-mode');
+        renderAdminUI();
+      } else { document.getElementById('login-error').style.display = 'block'; }
+    }
+    function cerrarAdmin() { document.getElementById('panel-admin').style.display = 'none'; document.body.classList.remove('admin-mode'); }
+    
+    function renderAdminUI() {
+      renderSeccionesDragList();
+      
+      const tabs = document.getElementById('adminTabsContainer');
+      tabs.innerHTML = '';
+      secciones.forEach(sec => {
+        const col = getColorForSection(sec);
+        const btn = document.createElement('button');
+        btn.textContent = `${sec.icono} ${sec.nombre}`;
+        btn.style.background = col.bg; 
+        btn.style.border = `2px solid ${col.color}`; 
+        btn.style.borderRadius = '20px'; 
+        btn.style.padding = '10px 20px'; 
+        btn.style.cursor = 'pointer'; 
+        btn.style.color = col.color;
+        btn.dataset.secId = sec.id;
+        btn.onclick = () => mostrarSeccionAdmin(sec.id);
+        tabs.appendChild(btn);
+      });
+      document.getElementById('addNewSectionBtn').onclick = () => añadirNuevaSeccion();
+    }
+    
+    function eliminarSeccion(idx) { 
+      if(secciones.length<=1) { alert("No se puede eliminar la única sección"); return; } 
+      if(confirm(`¿Eliminar ${secciones[idx].nombre}?`)) { 
+        secciones.splice(idx,1); 
+        guardarCompleto(); 
+        renderizarTodo(); 
+        renderAdminUI(); 
+        document.getElementById('admin-contenido').innerHTML = '<p style="color:#888;">Selecciona una sección</p>'; 
+      } 
+    }
+    
+    function añadirNuevaSeccion() {
+      let nombre = prompt("Nombre:"); if(!nombre) return;
+      let icono = prompt("Icono:", "📦") || "📦";
+      let tipo = prompt("Tipo (productos/liados/eventos/munchies):", "productos");
+      if(!['productos','liados','eventos','munchies'].includes(tipo)) tipo="productos";
+      const newId = "sec_"+Date.now();
+      let nueva = { id:newId, nombre:nombre.toUpperCase(), icono, tipo, colorKey:"dorado" };
+      if(tipo==='productos') nueva.items = [];
+      else if(tipo==='liados') nueva.items = [];
+      else if(tipo==='eventos') nueva.items = [];
+      else if(tipo==='munchies') nueva.sub = { bebidas:[], picar:[] };
+      secciones.push(nueva);
+      guardarCompleto(); 
+      renderizarTodo(); 
+      renderAdminUI(); 
+      mostrarSeccionAdmin(newId);
+    }
+    
+    function mostrarSeccionAdmin(secId) {
+      const sec = secciones.find(s=>s.id===secId);
+      if(!sec) return;
+      const col = getColorForSection(sec);
+      let html = '';
+      if(sec.tipo === 'productos') {
+        html = `<h3 style="color:${col.color}">${sec.icono} ${sec.nombre} (Arrastra)</h3><div class="admin-grid" id="admin-grid-${sec.id}">`;
+        if (!sec.items || sec.items.length === 0) {
+          html += `<div class="vacio-msg" style="border-color:${col.color};">📭 Sin productos</div>`;
+        } else {
+          sec.items.forEach((item,i) => {
+            const imgSrc = item.img || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Crect width="100" height="100" fill="%23333"/%3E%3Ctext x="50" y="55" fill="white" font-size="10" text-anchor="middle"%3EN/A%3C/text%3E%3C/svg%3E';
+            html += `<div class="admin-card" style="border-color:${col.color}" draggable="true" ondragstart="iniciarDrag(event,${i},'${sec.id}')" ondragend="finalizarDrag(event)" ondragover="permitirDrop(event)" ondrop="soltarDrop(event,${i},'${sec.id}')" ondragenter="marcarSobreDrop(event)" ondragleave="limpiarMarcador(event)">
+            <div class="drag-handle" style="color:${col.color}">⋮⋮ ARRASTRAR ⋮⋮</div>
+            <img src="${imgSrc}" id="admin-img-${sec.id}-${i}" class="admin-img" style="border-color:${col.color}">
+            <input type="file" id="file-${sec.id}-${i}" accept="image/*" class="admin-file-input" onchange="subirImagenProducto('${sec.id}',${i})">
+            <button onclick="document.getElementById('file-${sec.id}-${i}').click()" class="admin-btn btn-upload" style="border-color:${col.color}">📷 CAMBIAR FOTO</button>
+            <input type="text" id="nombre-${sec.id}-${i}" value="${escapeHtml(item.nombre || '')}" placeholder="Nombre" class="admin-input" onchange="actualizarProducto('${sec.id}',${i},'nombre',this.value)">
+            <input type="text" id="precio-${sec.id}-${i}" value="${escapeHtml(item.precio || '')}" placeholder="Precio" class="admin-precio" style="border-color:${col.color};color:${col.color}" onchange="actualizarProducto('${sec.id}',${i},'precio',this.value)">
+            <button onclick="eliminarProductoItem('${sec.id}',${i})" class="admin-btn btn-delete">🗑️ ELIMINAR</button>
+            </div>`;
+          });
+        }
+        html += `</div><button onclick="añadirProductoItem('${sec.id}')" style="width:100%; background:${col.color}; border-radius:30px; padding:15px; margin-top:10px; color:black; font-weight:bold; cursor:pointer;">➕ AÑADIR PRODUCTO</button>`;
+      } else if(sec.tipo === 'liados') {
+        html = `<h3 style="color:${col.color}">${sec.icono} ${sec.nombre}</h3><div class="admin-grid" id="admin-grid-${sec.id}">`;
+        if (!sec.items || sec.items.length === 0) {
+          html += `<div class="vacio-msg" style="border-color:${col.color};">📭 Sin liados</div>`;
+        } else {
+          sec.items.forEach((item,i) => {
+            html += `<div class="admin-card" style="border-color:${col.color}" draggable="true" ondragstart="iniciarDrag(event,${i},'${sec.id}')" ondragend="finalizarDrag(event)" ondragover="permitirDrop(event)" ondrop="soltarDrop(event,${i},'${sec.id}')" ondragenter="marcarSobreDrop(event)" ondragleave="limpiarMarcador(event)">
+            <div class="drag-handle" style="color:${col.color}">⋮⋮ ARRASTRAR ⋮⋮</div>
+            <div class="liado-icon" style="font-size:4rem; text-align:center;">🚬</div>
+            <input type="text" id="nombre-${sec.id}-${i}" value="${escapeHtml(item.nombre || '')}" placeholder="Nombre" class="admin-input" onchange="actualizarProducto('${sec.id}',${i},'nombre',this.value)">
+            <input type="text" id="precio-${sec.id}-${i}" value="${escapeHtml(item.precio || '')}" placeholder="Precio" class="admin-precio" style="border-color:${col.color};color:${col.color}" onchange="actualizarProducto('${sec.id}',${i},'precio',this.value)">
+            <button onclick="eliminarProductoItem('${sec.id}',${i})" class="admin-btn btn-delete">🗑️ ELIMINAR</button>
+            </div>`;
+          });
+        }
+        html += `</div><button onclick="añadirProductoItem('${sec.id}')" style="width:100%; background:${col.color}; border-radius:30px; padding:15px; margin-top:10px; color:black; font-weight:bold;">➕ AÑADIR LIADO</button>`;
+      } else if(sec.tipo === 'munchies') {
+        html = `<h3 style="color:${col.color}">${sec.icono} ${sec.nombre} - BEBIDAS</h3><div class="admin-grid">`;
+        if (!sec.sub.bebidas || sec.sub.bebidas.length === 0) {
+          html += `<div class="vacio-msg" style="border-color:${col.color};">📭 Sin bebidas</div>`;
+        } else {
+          sec.sub.bebidas.forEach((item,i) => {
+            html += `<div class="admin-card" style="border-color:${col.color}"><input type="text" id="bebida-nombre-${sec.id}-${i}" value="${escapeHtml(item.nombre || '')}" placeholder="Nombre" class="admin-input" onchange="actualizarMunchi('${sec.id}','bebidas',${i},'nombre',this.value)"><input type="text" id="bebida-precio-${sec.id}-${i}" value="${item.precio || ''}" placeholder="Precio" class="admin-precio" style="border-color:${col.color};color:${col.color}" onchange="actualizarMunchi('${sec.id}','bebidas',${i},'precio',this.value)"><button onclick="eliminarMunchiItem('${sec.id}','bebidas',${i})" class="admin-btn btn-delete">🗑️</button></div>`;
+          });
+        }
+        html += `</div><button onclick="añadirMunchiItem('${sec.id}','bebidas')" style="background:${col.color}; border-radius:30px; padding:15px; margin-top:10px; color:black; font-weight:bold;">➕ AÑADIR BEBIDA</button>`;
+        html += `<h3 style="color:${col.color}; margin-top:30px;">${sec.icono} ${sec.nombre} - PICAR</h3><div class="admin-grid">`;
+        if (!sec.sub.picar || sec.sub.picar.length === 0) {
+          html += `<div class="vacio-msg" style="border-color:${col.color};">📭 Sin productos de picar</div>`;
+        } else {
+          sec.sub.picar.forEach((item,i) => {
+            html += `<div class="admin-card" style="border-color:${col.color}"><input type="text" id="picar-nombre-${sec.id}-${i}" value="${escapeHtml(item.nombre || '')}" placeholder="Nombre" class="admin-input" onchange="actualizarMunchi('${sec.id}','picar',${i},'nombre',this.value)"><input type="text" id="picar-precio-${sec.id}-${i}" value="${item.precio || ''}" placeholder="Precio" class="admin-precio" style="border-color:${col.color};color:${col.color}" onchange="actualizarMunchi('${sec.id}','picar',${i},'precio',this.value)"><button onclick="eliminarMunchiItem('${sec.id}','picar',${i})" class="admin-btn btn-delete">🗑️</button></div>`;
+          });
+        }
+        html += `</div><button onclick="añadirMunchiItem('${sec.id}','picar')" style="background:${col.color}; border-radius:30px; padding:15px; margin-top:10px; color:black; font-weight:bold;">➕ AÑADIR PRODUCTO</button>`;
+      } else if(sec.tipo === 'eventos') {
+        html = `<h3 style="color:${col.color}">${sec.icono} ${sec.nombre}</h3><div class="admin-grid">`;
+        if (!sec.items || sec.items.length === 0) {
+          html += `<div class="vacio-msg" style="border-color:${col.color};">📭 Sin eventos</div>`;
+        } else {
+          sec.items.forEach((img,i) => {
+            const imgSrc = img || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"%3E%3Crect width="200" height="200" fill="%23333"/%3E%3Ctext x="100" y="110" fill="white" text-anchor="middle"%3EEVENTO%3C/text%3E%3C/svg%3E';
+            html += `<div class="admin-card" style="border-color:${col.color}"><img src="${imgSrc}" id="evento-img-${sec.id}-${i}" class="admin-img" style="border-color:${col.color}"><input type="file" id="evento-file-${sec.id}-${i}" accept="image/*" class="admin-file-input" onchange="subirImagenEvento('${sec.id}',${i})"><button onclick="document.getElementById('evento-file-${sec.id}-${i}').click()" class="admin-btn btn-upload">📷 CAMBIAR</button><button onclick="eliminarEvento('${sec.id}',${i})" class="admin-btn btn-delete">🗑️</button></div>`;
+          });
+        }
+        html += `</div><button onclick="añadirEventoItem('${sec.id}')" style="width:100%; background:${col.color}; border-radius:30px; padding:15px; margin-top:10px; color:black; font-weight:bold;">➕ AÑADIR CARTEL</button>`;
+      }
+      document.getElementById('admin-contenido').innerHTML = html;
+    }
+    
+    function escapeHtml(str) { return String(str || '').replace(/[&<>]/g, function(m){ if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
+    function actualizarProducto(secId, idx, campo, val) { const sec = secciones.find(s=>s.id===secId); if(sec && sec.items && sec.items[idx]) { sec.items[idx][campo]=val; guardarCompleto(); renderizarTodo(); mostrarSeccionAdmin(secId); } }
+    function añadirProductoItem(secId) { 
+      const sec = secciones.find(s=>s.id===secId); 
+      if(!sec.items) sec.items = [];
+      if(sec.tipo==='productos') sec.items.push({ img:'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Crect width="100" height="100" fill="%23333"/%3E%3Ctext x="50" y="55" fill="white" font-size="10" text-anchor="middle"%3ENUEVO%3C/text%3E%3C/svg%3E', nombre:'', precio:'' }); 
+      else if(sec.tipo==='liados') sec.items.push({ nombre:'', precio:'' }); 
+      guardarCompleto(); renderizarTodo(); mostrarSeccionAdmin(secId); 
+    }
+    function eliminarProductoItem(secId, idx) { if(!confirm('¿Eliminar?')) return; const sec = secciones.find(s=>s.id===secId); sec.items.splice(idx,1); guardarCompleto(); renderizarTodo(); mostrarSeccionAdmin(secId); }
+    function actualizarMunchi(secId, sub, idx, campo, val) { const sec = secciones.find(s=>s.id===secId); if(sec.sub && sec.sub[sub] && sec.sub[sub][idx]) { sec.sub[sub][idx][campo]=val; guardarCompleto(); renderizarTodo(); mostrarSeccionAdmin(secId); } }
+    function añadirMunchiItem(secId, sub) { const sec = secciones.find(s=>s.id===secId); sec.sub[sub].push({ nombre:'', precio:'' }); guardarCompleto(); renderizarTodo(); mostrarSeccionAdmin(secId); }
+    function eliminarMunchiItem(secId, sub, idx) { if(!confirm('¿Eliminar?')) return; const sec = secciones.find(s=>s.id===secId); sec.sub[sub].splice(idx,1); guardarCompleto(); renderizarTodo(); mostrarSeccionAdmin(secId); }
+    function añadirEventoItem(secId) { const sec = secciones.find(s=>s.id===secId); sec.items.push('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"%3E%3Crect width="200" height="200" fill="%23333"/%3E%3Ctext x="100" y="110" fill="white" text-anchor="middle"%3ENUEVO%3C/text%3E%3C/svg%3E'); guardarCompleto(); renderizarTodo(); mostrarSeccionAdmin(secId); }
+    function eliminarEvento(secId, idx) { if(!confirm('¿Eliminar cartel?')) return; const sec = secciones.find(s=>s.id===secId); sec.items.splice(idx,1); guardarCompleto(); renderizarTodo(); mostrarSeccionAdmin(secId); }
+    async function subirImagenProducto(secId, idx) { const input = document.getElementById(`file-${secId}-${idx}`); if(input.files && input.files[0]) { const reader = new FileReader(); reader.onload = async (e) => { const comp = await comprimirImagen(e.target.result); const sec = secciones.find(s=>s.id===secId); sec.items[idx].img = comp; guardarCompleto(); renderizarTodo(); mostrarSeccionAdmin(secId); }; reader.readAsDataURL(input.files[0]); } }
+    async function subirImagenEvento(secId, idx) { const input = document.getElementById(`evento-file-${secId}-${idx}`); if(input.files && input.files[0]) { const reader = new FileReader(); reader.onload = async (e) => { const comp = await comprimirImagen(e.target.result); const sec = secciones.find(s=>s.id===secId); sec.items[idx] = comp; guardarCompleto(); renderizarTodo(); mostrarSeccionAdmin(secId); }; reader.readAsDataURL(input.files[0]); } }
+    function comprimirImagen(dataUrl, calidad=0.7, maxAncho=600) { return new Promise(resolve=>{ const img=new Image(); img.onload=()=>{ const canvas=document.createElement('canvas'); let w=img.width, h=img.height; if(w>maxAncho){ h=(maxAncho/w)*h; w=maxAncho; } canvas.width=w; canvas.height=h; canvas.getContext('2d').drawImage(img,0,0,w,h); resolve(canvas.toDataURL('image/jpeg',calidad)); }; img.src=dataUrl; }); }
+    function guardarTodo() { guardarCompleto(); alert("✅ Guardado"); }
+    
+    function iniciarDrag(e, idx, secId) { draggedIndex=idx; currentSecId=secId; e.dataTransfer.setData('text/plain',idx); e.target.closest('.admin-card')?.classList.add('dragging'); }
+    function finalizarDrag(e) { e.target.closest('.admin-card')?.classList.remove('dragging'); draggedIndex=null; currentSecId=null; }
+    function permitirDrop(e) { e.preventDefault(); }
+    function soltarDrop(e, targetIdx, secId) { e.preventDefault(); if(draggedIndex!==null && currentSecId===secId && draggedIndex!==targetIdx) { const sec = secciones.find(s=>s.id===secId); if(sec && sec.items) { const [moved] = sec.items.splice(draggedIndex,1); sec.items.splice(targetIdx,0,moved); guardarCompleto(); renderizarTodo(); mostrarSeccionAdmin(secId); } } document.querySelectorAll('.admin-card').forEach(c=>c.classList.remove('drag-over','dragging')); }
+    function marcarSobreDrop(e) { e.preventDefault(); const card = e.target.closest('.admin-card'); if(card) { document.querySelectorAll('.admin-card').forEach(c=>c.classList.remove('drag-over')); card.classList.add('drag-over'); } }
+    function limpiarMarcador(e) { const card = e.target.closest('.admin-card'); if(card) card.classList.remove('drag-over'); }
+
+    window.addEventListener('load', cargarDatos);
+  </script>
+</body>
+</html>
