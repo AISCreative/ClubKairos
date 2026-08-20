@@ -8,6 +8,10 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="theme-color" content="#0a0a0f">
   <title>Club Kairos · Catálogo</title>
+  <!-- PWA -->
+  <link rel="manifest" href="./manifest.json">
+  <meta name="apple-mobile-web-app-title" content="Club Kairos">
+  <link rel="apple-touch-icon" href="./icons/icon-192.png">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
     html, body { width: 100%; height: 100%; overflow: hidden; background: #050508; }
@@ -94,7 +98,6 @@
     .drag-handle { text-align: center; font-size: 1.2rem; margin-bottom: 10px; cursor: grab; background: rgba(255,255,255,0.05); border-radius: 30px; padding: 5px; border: 1px solid; }
     .drag-handle:active { cursor: grabbing; }
 
-    /* Estilos para arrastrar secciones en admin */
     .seccion-drag-item {
       padding: 10px 16px;
       margin: 4px;
@@ -128,7 +131,6 @@
     }
     .seccion-drag-item .delete-btn:hover { transform: scale(1.1); }
 
-    /* Clase para productos vacíos */
     .vacio-msg {
       grid-column: 1 / -1;
       text-align: center;
@@ -146,7 +148,7 @@
     <div class="header">
       <div class="logo">
         <div class="logo-masquehigh">CLUB KAIROS</div>
-     </div>
+      </div>
       <div class="welcome">✨ Bienvenido a Club Kairos ✨</div>
     </div>
     <div class="pestanas-wrapper">
@@ -187,7 +189,6 @@
       </div>
     </div>
     
-    <!-- SECCIONES REORDENABLES CON ARRASTRE -->
     <div style="margin-bottom: 20px; background: #0c0c16; padding: 15px; border-radius: 20px; border: 1px solid #22223b;">
       <p style="color: #888; font-size: 1.2rem; margin-bottom: 10px;">🔄 Arrastra las secciones para reordenarlas:</p>
       <div id="seccionesDragList" style="display: flex; flex-wrap: wrap; gap: 8px; min-height: 60px; padding: 8px; background: rgba(0,0,0,0.2); border-radius: 16px;"></div>
@@ -203,7 +204,8 @@
   <div id="saveIndicator" class="save-indicator">✅ GUARDADO</div>
 
   <script>
-    const CONTRASENA = "kairo123";
+    // ======== CONTRASEÑA ========
+    const CONTRASENA = "kairos123";
     const STORAGE_KEY = 'club_kairos_datos_v1';
     const VERSION_KEY = 'club_kairos_version_v1';
 
@@ -226,12 +228,10 @@
       liados: COLORES_NEON.cian,
       munchies: COLORES_NEON.amarillo,
       eventos: COLORES_NEON.lima,
-      cbd: COLORES_NEON.azulElectro,
-      bebidas: COLORES_NEON.dorado,
-      picar: COLORES_NEON.naranja
+      cbd: COLORES_NEON.azulElectro
     };
 
-    // ========== DATOS MAESTROS (TODOS VACÍOS) ==========
+    // ======== DATOS MAESTROS CON PRODUCTOS PRECARGADOS ========
     const DATOS_MAESTROS = [
       { 
         id: "extracciones", 
@@ -247,7 +247,23 @@
         icono: "🌿", 
         tipo: "productos", 
         colorKey: "hierbas",
-        items: []
+        items: [
+          { img: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Crect width="100" height="100" fill="%2300ffaa"/%3E%3Ctext x="50" y="55" fill="black" font-size="8" text-anchor="middle"%3ESUPERBOOF%3C/text%3E%3C/svg%3E', nombre: 'Superboof', precio: '6★' },
+          { img: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Crect width="100" height="100" fill="%2300ffaa"/%3E%3Ctext x="50" y="55" fill="black" font-size="8" text-anchor="middle"%3ETANGIE%3C/text%3E%3C/svg%3E', nombre: 'Tangie', precio: '7★' },
+          { img: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Crect width="100" height="100" fill="%2300ffaa"/%3E%3Ctext x="50" y="55" fill="black" font-size="8" text-anchor="middle"%3EPINK LIMEZ%3C/text%3E%3C/svg%3E', nombre: 'Pink Limez', precio: '6★' },
+          { img: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Crect width="100" height="100" fill="%2300ffaa"/%3E%3Ctext x="50" y="55" fill="black" font-size="8" text-anchor="middle"%3EGARY PAYTON%3C/text%3E%3C/svg%3E', nombre: 'Gary Payton', precio: '6★' },
+          { img: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Crect width="100" height="100" fill="%2300ffaa"/%3E%3Ctext x="50" y="55" fill="black" font-size="8" text-anchor="middle"%3ETROPICANA%3C/text%3E%3C/svg%3E', nombre: 'Tropicana Cherry', precio: '6★' },
+          { img: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Crect width="100" height="100" fill="%2300ffaa"/%3E%3Ctext x="50" y="55" fill="black" font-size="8" text-anchor="middle"%3ECRITICAL%2B%3C/text%3E%3C/svg%3E', nombre: 'Critical+', precio: '6★' },
+          { img: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Crect width="100" height="100" fill="%2300ffaa"/%3E%3Ctext x="50" y="55" fill="black" font-size="8" text-anchor="middle"%3ECHANTILLY%3C/text%3E%3C/svg%3E', nombre: 'Chantilly', precio: '6★' },
+          { img: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Crect width="100" height="100" fill="%2300ffaa"/%3E%3Ctext x="50" y="55" fill="black" font-size="8" text-anchor="middle"%3EPAPAYA%3C/text%3E%3C/svg%3E', nombre: 'Papaya', precio: '6★' },
+          { img: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Crect width="100" height="100" fill="%2300ffaa"/%3E%3Ctext x="50" y="55" fill="black" font-size="8" text-anchor="middle"%3EAMNESIA%3C/text%3E%3C/svg%3E', nombre: 'Amnesia', precio: '6★' },
+          { img: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Crect width="100" height="100" fill="%2300ffaa"/%3E%3Ctext x="50" y="55" fill="black" font-size="8" text-anchor="middle"%3EZKITTEL%3C/text%3E%3C/svg%3E', nombre: 'Zkittel', precio: '7★' },
+          { img: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Crect width="100" height="100" fill="%2300ffaa"/%3E%3Ctext x="50" y="55" fill="black" font-size="8" text-anchor="middle"%3ESUPERBOOF 7%3C/text%3E%3C/svg%3E', nombre: 'Superboof', precio: '7★' },
+          { img: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Crect width="100" height="100" fill="%2300ffaa"/%3E%3Ctext x="50" y="55" fill="black" font-size="8" text-anchor="middle"%3EGRUNTZ%3C/text%3E%3C/svg%3E', nombre: 'Gruntz', precio: '7★' },
+          { img: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Crect width="100" height="100" fill="%2300ffaa"/%3E%3Ctext x="50" y="55" fill="black" font-size="8" text-anchor="middle"%3EMAC 1%3C/text%3E%3C/svg%3E', nombre: 'Mac 1', precio: '6★' },
+          { img: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Crect width="100" height="100" fill="%2300ffaa"/%3E%3Ctext x="50" y="55" fill="black" font-size="8" text-anchor="middle"%3EOREOZ%3C/text%3E%3C/svg%3E', nombre: 'Oreoz', precio: '6★' },
+          { img: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Crect width="100" height="100" fill="%2300ffaa"/%3E%3Ctext x="50" y="55" fill="black" font-size="8" text-anchor="middle"%3ELONDON%3C/text%3E%3C/svg%3E', nombre: 'London', precio: '6★' }
+        ]
       },
       { 
         id: "hash", 
@@ -255,7 +271,12 @@
         icono: "🍫", 
         tipo: "productos", 
         colorKey: "hash",
-        items: []
+        items: [
+          { img: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Crect width="100" height="100" fill="%23ff6600"/%3E%3Ctext x="50" y="55" fill="white" font-size="8" text-anchor="middle"%3EDRY%3C/text%3E%3C/svg%3E', nombre: 'Dry', precio: '6★' },
+          { img: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Crect width="100" height="100" fill="%23ff6600"/%3E%3Ctext x="50" y="55" fill="white" font-size="8" text-anchor="middle"%3EFROZEN%3C/text%3E%3C/svg%3E', nombre: 'Frozen', precio: '8★' },
+          { img: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Crect width="100" height="100" fill="%23ff6600"/%3E%3Ctext x="50" y="55" fill="white" font-size="8" text-anchor="middle"%3EFROZEN 10%3C/text%3E%3C/svg%3E', nombre: 'Frozen', precio: '10★' },
+          { img: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Crect width="100" height="100" fill="%23ff6600"/%3E%3Ctext x="50" y="55" fill="white" font-size="8" text-anchor="middle"%3ESTATIC%3C/text%3E%3C/svg%3E', nombre: 'Static', precio: '10★' }
+        ]
       },
       {
         id: "cbd",
@@ -335,7 +356,6 @@
         if (sec.tipo === 'munchies' && !sec.sub) {
           sec.sub = { bebidas: [], picar: [] };
         }
-        // Asegurar que items exista para todas las secciones de tipo productos/liados/eventos
         if (['productos', 'liados', 'eventos'].includes(sec.tipo) && !sec.items) {
           sec.items = [];
         }
@@ -415,7 +435,7 @@
         card.style.borderColor = color.color;
         card.style.boxShadow = `0 0 15px ${color.glow}`;
         const imgSrc = item.img || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Crect width="100" height="100" fill="%23333"/%3E%3Ctext x="50" y="55" fill="white" font-size="10" text-anchor="middle"%3EN/A%3C/text%3E%3C/svg%3E';
-        card.innerHTML = `<img src="${imgSrc}" style="border-color: ${color.color};"><h4 style="color:white;">${escapeHtml(item.nombre || 'Sin nombre')}</h4><div class="producto-precio" style="color:${color.color}; border-color:${color.color}; background:${color.bg};">${escapeHtml(item.precio || '0€')}</div>`;
+        card.innerHTML = `<img src="${imgSrc}" style="border-color: ${color.color};"><h4 style="color:white;">${escapeHtml(item.nombre || 'Sin nombre')}</h4><div class="producto-precio" style="color:${color.color}; border-color:${color.color}; background:${color.bg};">${escapeHtml(item.precio || '0★')}</div>`;
         card.addEventListener('click', (e) => { e.stopPropagation(); if(item.img) abrirImagenGrande(item.img); });
         grid.appendChild(card);
       });
@@ -434,8 +454,8 @@
         const div = document.createElement('div');
         div.className = 'liado-card';
         div.style.borderColor = color.color;
-        div.innerHTML = `<div class="liado-icon" style="filter: drop-shadow(0 0 10px ${color.color});">🚬</div><h4 style="color:${color.color};">${escapeHtml(item.nombre || 'Sin nombre')}</h4><div class="liado-precio" style="color:${color.color}; border-color:${color.color};">${escapeHtml(item.precio || '0€')}</div>`;
-        div.addEventListener('click', () => alert(`${item.nombre || 'Sin nombre'}\n${item.precio || '0€'}`));
+        div.innerHTML = `<div class="liado-icon" style="filter: drop-shadow(0 0 10px ${color.color});">🚬</div><h4 style="color:${color.color};">${escapeHtml(item.nombre || 'Sin nombre')}</h4><div class="liado-precio" style="color:${color.color}; border-color:${color.color};">${escapeHtml(item.precio || '0★')}</div>`;
+        div.addEventListener('click', () => alert(`${item.nombre || 'Sin nombre'}\n${item.precio || '0★'}`));
         grid.appendChild(div);
       });
     }
@@ -486,7 +506,7 @@
       });
     }
 
-    // ========== FUNCIONES PARA ARRASTRAR SECCIONES ==========
+    // ======== FUNCIONES ADMIN ========
     function renderSeccionesDragList() {
       const container = document.getElementById('seccionesDragList');
       if (!container) return;
@@ -552,7 +572,6 @@
       });
     }
 
-    // ========== ADMIN FUNCTIONS ==========
     function mostrarLogin() { document.getElementById('panel-login').style.display = 'flex'; document.getElementById('login-password').value = ''; }
     function cerrarLogin() { document.getElementById('panel-login').style.display = 'none'; document.getElementById('login-error').style.display = 'none'; }
     function comprobarLogin() {
@@ -716,6 +735,19 @@
     function soltarDrop(e, targetIdx, secId) { e.preventDefault(); if(draggedIndex!==null && currentSecId===secId && draggedIndex!==targetIdx) { const sec = secciones.find(s=>s.id===secId); if(sec && sec.items) { const [moved] = sec.items.splice(draggedIndex,1); sec.items.splice(targetIdx,0,moved); guardarCompleto(); renderizarTodo(); mostrarSeccionAdmin(secId); } } document.querySelectorAll('.admin-card').forEach(c=>c.classList.remove('drag-over','dragging')); }
     function marcarSobreDrop(e) { e.preventDefault(); const card = e.target.closest('.admin-card'); if(card) { document.querySelectorAll('.admin-card').forEach(c=>c.classList.remove('drag-over')); card.classList.add('drag-over'); } }
     function limpiarMarcador(e) { const card = e.target.closest('.admin-card'); if(card) card.classList.remove('drag-over'); }
+
+    // Registrar Service Worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then((registration) => {
+            console.log('SW registrado correctamente:', registration);
+          })
+          .catch((error) => {
+            console.log('Error al registrar SW:', error);
+          });
+      });
+    }
 
     window.addEventListener('load', cargarDatos);
   </script>
