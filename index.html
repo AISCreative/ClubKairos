@@ -8,7 +8,6 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="theme-color" content="#0a0a0f">
   <title>Club Kairos · Catálogo</title>
-  <!-- PWA -->
   <link rel="manifest" href="./manifest.json">
   <meta name="apple-mobile-web-app-title" content="Club Kairos">
   <link rel="apple-touch-icon" href="./icons/icon-192.png">
@@ -25,7 +24,6 @@
     .header { padding: 1.5rem 1.5rem 0.8rem; text-align: center; border-bottom: 2px solid #ff6b00; background: linear-gradient(180deg, rgba(255, 107, 0, 0.15) 0%, transparent 100%); }
     .logo-masquehigh { font-size: 4.8rem; font-weight: 900; background: linear-gradient(135deg, #ffd700, #ff6b00, #ffd700, #ff8c00); -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: 0 0 30px rgba(255, 215, 0, 0.5); line-height: 1.1; animation: rainbowShift 2s infinite; }
     @keyframes rainbowShift { 0%, 100% { filter: hue-rotate(0deg); } 50% { filter: hue-rotate(30deg); } }
-    .logo-club { font-size: 3.5rem; font-weight: 900; letter-spacing: 12px; background: linear-gradient(135deg, #ffd700, #ff6b00); -webkit-background-clip: text; background-clip: text; color: transparent; margin-top: -0.5rem; text-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
     .welcome { font-size: 1.6rem; color: #ffd700; background: rgba(255, 215, 0, 0.1); padding: 0.3rem 1.5rem; border-radius: 40px; display: inline-block; border: 1px solid #ffd700; box-shadow: 0 0 15px rgba(255, 215, 0, 0.3); }
     
     .pestanas-wrapper { overflow-x: auto; overflow-y: hidden; padding: 1rem 1rem; scrollbar-width: thin; }
@@ -204,7 +202,6 @@
   <div id="saveIndicator" class="save-indicator">✅ GUARDADO</div>
 
   <script>
-    // ======== CONTRASEÑA ========
     const CONTRASENA = "kairos123";
     const STORAGE_KEY = 'club_kairos_datos_v1';
     const VERSION_KEY = 'club_kairos_version_v1';
@@ -231,7 +228,7 @@
       cbd: COLORES_NEON.azulElectro
     };
 
-    // ======== DATOS MAESTROS CON PRODUCTOS PRECARGADOS ========
+    // ======== DATOS MAESTROS ========
     const DATOS_MAESTROS = [
       { 
         id: "extracciones", 
@@ -325,27 +322,10 @@
     }
 
     function cargarDatos() {
-      const versionGuardada = localStorage.getItem(VERSION_KEY);
-      const versionActual = '2.1';
-      
-      if (versionGuardada !== versionActual) {
-        secciones = JSON.parse(JSON.stringify(DATOS_MAESTROS));
-        localStorage.setItem(STORAGE_KEY, JSON.stringify({ secciones }));
-        localStorage.setItem(VERSION_KEY, versionActual);
-      } else {
-        const guardado = localStorage.getItem(STORAGE_KEY);
-        if (guardado) {
-          try {
-            const data = JSON.parse(guardado);
-            if (data.secciones) secciones = data.secciones;
-            else secciones = data;
-          } catch(e) {
-            secciones = JSON.parse(JSON.stringify(DATOS_MAESTROS));
-          }
-        } else {
-          secciones = JSON.parse(JSON.stringify(DATOS_MAESTROS));
-        }
-      }
+      // FORZAR RECARGA DE DATOS MAESTROS
+      secciones = JSON.parse(JSON.stringify(DATOS_MAESTROS));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ secciones }));
+      localStorage.setItem(VERSION_KEY, '2.1');
       
       secciones.forEach(sec => {
         if (!sec.colorKey) {
